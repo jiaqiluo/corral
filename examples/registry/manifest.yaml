@@ -1,31 +1,30 @@
 name: registry
 description: |
-  An authenticated docker registry running in Digitalocean.
+  A DigitalOcean VM configured as a container registry and equipped with essential development tools.
 variables:
   digitalocean_token:
     sensitive: true
     type: string
-    optional: false
     description: "A Digitalocean API token with write permission. https://docs.digitalocean.com/reference/api/create-personal-access-token/"
   digitalocean_domain:
     sensitive: true
     type: string
-    optional: false
     description: "The domain to use for the registry host."
   registry_host:
     type: string
     readOnly: true
     description: "host the configured registry can be accessed at"
-  username:
+  corral_node_pools:
     type: string
     readOnly: true
-    description: "username for registry authentication"
-  password:
-    type: string
-    readOnly: true
-    description: "password for registry authentication"
+    description: "information about all nodes"
 commands:
+  # Run the TF module
   - module: main
+  # Run the shell script
   - command: /opt/corral/install.sh
+    node_pools:
+      - registry
+  - command: git clone https://github.com/jiaqiluo/rancher.git
     node_pools:
       - registry
